@@ -3,6 +3,12 @@
 {% block title %}Message{% endblock %}
 
 {% block content %}
+
+	{% if logged_in %}
+		<h1 class="titles"> Logged In </h1>
+	{% else %}
+		<h1 class="titles"> Error </h1>
+	{% endif %}
   <p>{{ message }}</p>
 
 

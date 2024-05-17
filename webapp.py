@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, session, request, jsonify, render_template, flash
 from markupsafe import Markup
-from flask_apscheduler import APScheduler
-from apscheduler.schedulers.background import BackgroundScheduler
+#from flask_apscheduler import APScheduler
+#from apscheduler.schedulers.background import BackgroundScheduler
 from flask_oauthlib.client import OAuth
 from bson.objectid import ObjectId
 
@@ -10,6 +10,8 @@ import os
 import time
 import pymongo
 import sys
+import json
+ 
  
 app = Flask(__name__)
 
@@ -37,7 +39,7 @@ github = oauth.remote_app(
 url = os.environ["MONGO_CONNECTION_STRING"]
 client = pymongo.MongoClient(url)
 db = client[os.environ["MONGO_DBNAME"]]
-collection = db['posts'] #TODO: put the name of the collection here
+collection = db['Food'] #TODO: put the name of the collection here
 
 # Send a ping to confirm a successful connection
 try:
@@ -60,7 +62,7 @@ def home():
 #redirect to GitHub's OAuth page and confirm callback URL
 @app.route('/login')
 def login():   
-    return github.authorize(callback=url_for('authorized', _external=True, _scheme='https')) #callback URL must match the pre-configured callback URL
+    return github.authorize(callback=url_for('authorized', _external=True, _scheme='http')) #callback URL must match the pre-configured callback URL
 
 @app.route('/logout')
 def logout():
@@ -73,7 +75,8 @@ def authorized():
     resp = github.authorized_response()
     if resp is None:
         session.clear()
-        flash('Access denied: reason=' + request.args['error'] + ' error=' + request.args['error_description'] + ' full=' + pprint.pformat(request.args), 'error')      
+        message = 'Access denied: reason=' + request.args['error'] + ' error=' + request.args['error_description'] + ' full=' + pprint.pformat(request.args)      
+        #flash('Access denied: reason=' + request.args['error'] + ' error=' + request.args['error_description'] + ' full=' + pprint.pformat(request.args), 'error')      
     else:
         try:
             session['github_token'] = (resp['access_token'], '') #save the token to prove that the user logged in
@@ -86,17 +89,49 @@ def authorized():
     return render_template('message.html', message=message)
 
 
-@app.route('/page1')
+@app.route('/page1', methods=['GET','POST'])
 def renderPage1():
-    if 'user_data' in session:
-        user_data_pprint = pprint.pformat(session['user_data'])#format the user data nicely
-    else:
-        user_data_pprint = '';
-    return render_template('page1.html',dump_user_data=user_data_pprint)
+    macro_Info = ""
+    descriptions = ""
+    if "search" in request.args:
+        category = request.args.get('search')
+        descriptions = get_description_options(category)
+    elif "description" in request.args:
+        description = request.args.get('description')
+        macros = get_data(description, "Protein")
+        macro_Info = "Test " + str(macros)
+    return render_template('page1.html', description_options=descriptions, macroInfo=macro_Info)
 
 @app.route('/page2')
 def renderPage2():
     return render_template('page2.html')
+    
+@app.route('/page3')
+def renderPage3():
+    return render_template('page3.html')
+    
+def get_description_options(category):
+    """Return the html code for the drop down menu.  Each option is a state abbreviation from the demographic data."""
+    with open('food.json') as food_data:
+        allFoods = json.load(food_data)
+    foods=[]
+    for c in allFoods:
+        if c["Category"] == category:
+            if c["Description"] not in foods:
+                foods.append(c["Description"])
+    options=""
+    for s in foods:
+        options += Markup("<option value=\"" + s + "\">" + s + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
+    return options
+
+def get_data(description, dataType):
+    with open('food.json') as food_data:
+        foods = json.load(food_data)
+    data = 0
+    for c in foods:
+        if c["Description"] == description:
+            data = c["Data"][dataType]
+    return data
 
 #the tokengetter is automatically called to check who is logged in.
 @github.tokengetter

@@ -1,1 +1,40 @@
+body{
+	background: Ivory;
+}
 
+#navText{
+	display: flex;
+	justify-content: center;
+    align-items: center;
+	text-align: center;
+}
+
+.titles{
+	text-align: center;
+	padding: 2%;
+	font-family: "Monaco";
+}
+
+#homeP{
+	 margin: 2%;
+	 font-family: "Monaco";
+	 font-size: 110%;
+}
+
+img{
+	margin: auto;
+	width: 50%;
+	height: 50%;
+	padding: 2%;
+}
+
+ form{
+	 margin: 2%;
+	 font-family: "Monaco";
+ }
+ 
+ p{
+	margin: 2%;
+	font-family: "Monaco";
+	font-size: 110%;
+ }

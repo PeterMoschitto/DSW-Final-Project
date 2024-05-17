@@ -5,12 +5,20 @@
 {% block title %}page1{% endblock %}
 
 {% block content %}
-  <h1>This is Page 1</h1>
+	<h1 class="titles">Find Food</h1>
 
-  <p>Lorem ipsum sit dolor amet.</p>
+	<form action="/page1">
+		<input type="text" placeholder="Search.." name="search">
+		<input type="submit" value = "Submit">
+	</form>
 
-  <pre>
-    {{ dump_user_data }}
-  </pre>
 
+	<form action="/page1">
+    <select name="description" > <!-- add onchange="this.form.submit()" to submit/update the form when an option is selected.  Usefull for then displaying county options. -->
+        {{ description_options }}
+    </select>
+	<input type="submit" value="Get macro info">
+	</form>
+	
+	<p>{{ macroInfo }}</p>
 {% endblock %}
