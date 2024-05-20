@@ -93,14 +93,21 @@ def authorized():
 def renderPage1():
     macro_Info = ""
     descriptions = ""
+    sugar_Info = ""
+    fat_Info = ""
     if "search" in request.args:
-        category = request.args.get('search')
+        category = request.args.get('search').lower().capitalize()
         descriptions = get_description_options(category)
     elif "description" in request.args:
         description = request.args.get('description')
         macros = get_data(description, "Protein")
-        macro_Info = "Test " + str(macros)
-    return render_template('page1.html', description_options=descriptions, macroInfo=macro_Info)
+        sugar = get_data(description, "Sugar Total")
+        fat = get_fat_data(description)
+        macro_Info = "Protein: " + str(macros) + " grams per serving"
+        sugar_Info = "Total Sugar: " + str(sugar) + " grams per serving"
+        fat_Info = "Saturated Fat: " + str(fat) + " grams per serving"
+    return render_template('page1.html', description_options=descriptions, macroInfo=macro_Info, sugarInfo=sugar_Info, fatInfo=fat_Info)
+    
 
 @app.route('/page2')
 def renderPage2():
@@ -132,6 +139,15 @@ def get_data(description, dataType):
         if c["Description"] == description:
             data = c["Data"][dataType]
     return data
+    
+def get_fat_data(description):
+    with open('food.json') as food_data:
+        foods = json.load(food_data)
+    data = 0
+    for c in foods:
+        if c["Description"] == description:
+            data = c["Data"]["Fat"]["Saturated Fat"]
+    return data
 
 #the tokengetter is automatically called to check who is logged in.
 @github.tokengetter
@@ -140,4 +156,4 @@ def get_github_oauth_token():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
