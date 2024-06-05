@@ -6,8 +6,61 @@
 
 {% block content %}
 
-  <h1 class="titles">This is Page 2</h1>
+  <h1 class="titles">Personal Info</h1>
+<div class="container mt-4">
+   <form action={{ url_for("renderPage2") }} method="POST" class="needs-validation" novalidate>
+    <div class="mb-4">
+      <label for="name" class="form-label">Name:</label>
+      <input type="text" class="form-control" id="name" placeholder="Enter name" name="name" required>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
+    </div>
+    <div class="mb-4">
+      <label for="height" class="form-label">Height:</label>
+      <input type="number" class="form-control" id="height" placeholder="Enter height in inches" name="height" aria-describedby="inputGroupPrepend" required>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field in inches.</div>
+    </div>
+     <div class="mb-4">
+      <label for="weight" class="form-label">Weight:</label>
+      <input type="number" class="form-control" id="weight" placeholder="Enter weight in lbs" name="weight" required>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
+    </div>
+     <div class="mb-4">
+      <label for="age" class="form-label">Age:</label>
+      <input type="number" class="form-control" id="age" placeholder="Enter age" name="age" required>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Please fill out this field.</div>
+    </div>
+    <div>
+    <p id = goal_text> What is your goal? </p>
+    <input type="radio" id="weight_goal" name="weight_goal" value="Gain">
+    <label for="weight_goal"> Gain Weight </label><br>
+    <input type="radio" id="weight_goal" name="weight_goal" value="Lose">
+    <label for="weight_goal"> Lose Weight </label><br>
+    </div>
+    <div class="form-check mb-3">
+    <br>    <br>
+      <input class="form-check-input" type="checkbox" id="myCheck"  name="remember" required>
+      <label class="form-check-label" for="myCheck">This information is accurate.</label>
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">Check this checkbox to continue.</div>
+    </div>
+    <div class="mb-4">
+  <button class="btn btn-primary" type="submit">Submit</button> <!--  -->
+</div>
+</form>
 
-  <p>Lorem ipsum</p>
+	
+  
+  
+  
+
 
 {% endblock %}
+
+
+
+
+ 

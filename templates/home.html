@@ -6,43 +6,45 @@
 
 {% block content %}
 
-  <h1 class="titles">Home</h1>
-
-  <p id="homeP">This website is created to help you keep track of how you are eating. You can use the find food page to search for 
-     different foods and get basic macro information.</p> 
-	 
-  <p id="homeP">If you choose to login, you will be able to access the stats and communuity pages. In the stats page, you will
-	 be able to enter some personal information and keep track of your nutrients. The community page will show you
-	 other people who are using this website to track their data.</p>
-
-<div id="demo" class="carousel carousel-dark slide carousel-fade" data-bs-ride="carousel">
-
-  <!-- Indicators/dots -->
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
-    <button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
-    <button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
-  </div>
-  
-  <!-- The slideshow/carousel -->
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="/static/foodImg1.jpg" alt="food picture" class="d-block">
-    </div>
-    <div class="carousel-item">
-      <img src="/static/foodDataPic1.png" alt="food chart" class="d-block">
-    </div>
-    <div class="carousel-item">
-      <img src="/static/foodImg2.jpg" alt="food picture" class="d-block">
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-8 mx-auto text-center">
+      <h1 class="display-4 mb-4">Welcome to Our Nutrition Tracker</h1>
+      <p class="lead mb-4" id="homeP">This website is created to help you keep track of how you are eating. You can use the find food page to search for different foods and get basic macro information.</p>
+      <p class="lead mb-5" id="homeP">If you choose to login, you will be able to access the stats and community pages. In the stats page, you will be able to enter some personal information and keep track of your nutrients. The community page will show you other people who are using this website to track their data.</p>
     </div>
   </div>
-  
-  <!-- Left and right controls/icons -->
-  <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon"></span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
-    <span class="carousel-control-next-icon"></span>
-  </button>
+
+  <div class="row">
+    <div class="col-md-10 mx-auto">
+      <div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner rounded">
+          <div class="carousel-item active">
+            <img src="/static/foodImg1.jpg" class="d-block w-100" alt="Food Picture">
+          </div>
+          <div class="carousel-item">
+            <img src="/static/foodDataPic1.png" class="d-block w-100" alt="Food Chart">
+          </div>
+          <div class="carousel-item">
+            <img src="/static/foodImg2.jpg" class="d-block w-100" alt="Food Picture">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
+
 {% endblock %}

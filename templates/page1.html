@@ -2,26 +2,90 @@
 
 {% set active_page = "page1" %}
 
-{% block title %}page1{% endblock %}
+{% block title %}Food Stats{% endblock %}
 
 {% block content %}
-	<h1 class="titles">Find Food</h1>
+<div class="container">
+  <h1 class="text-center mb-4">Food Stats</h1>
 
-	<form action="/page1">
-		<input type="text" placeholder="Search.." name="search">
-		<input type="submit" value = "Submit">
-	</form>
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-6">
+      <form action="/page1" class="input-group">
+        <input type="text" class="form-control" placeholder="Search..." name="search">
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-6">
+      <form action="/page1" class="input-group">
+        <select name="description" class="form-control">
+          {{ description_options }}
+        </select>
+        <div class="input-group-append">
+          <button class="btn btn-success" type="submit">Get Macro Info</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-	<form action="/page1">
-    <select name="description" > <!-- add onchange="this.form.submit()" to submit/update the form when an option is selected.  Usefull for then displaying county options. -->
-        {{ description_options }}
-    </select>
-	<input type="submit" value="Get macro info">
-	</form>
-	
-	<p>{{ macroInfo }}</p>
-	<p>{{ sugarInfo }}</p>
-	<p>{{ fatInfo }}</p>
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-6">
+      <p class="lead">{{ macroInfo }}</p>
+      <p class="lead">{{ sugarInfo }}</p>
+      <p class="lead">{{ fatInfo }}</p>
+      <p class="lead">{{ carbInfo }}</p>
+    </div>
+  </div>
 
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div id="chartContainer" style="height: 370px;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.onload = function() {
+    var chart = new CanvasJS.Chart("chartContainer", {
+      theme: "light2",
+      exportFileName: "Nutrient Info",
+      exportEnabled: true,
+      animationEnabled: true,
+      title: {
+        text: "Nutrient Info"
+      },
+      legend: {
+        cursor: "pointer",
+        itemclick: explodePie
+      },
+      data: [{
+        type: "doughnut",
+        innerRadius: 65,
+        showInLegend: true,
+        indexLabel: "{name} - #percent%",
+        dataPoints: [
+          { y: {{ macros }}, name: "Proteins" },
+          { y: {{ sugar }}, name: "Sugars" },
+          { y: {{ fat }}, name: "Fats" },
+          { y: {{ carb }}, name: "Carbs" }
+        ]
+      }]
+    });
+    chart.render();
+
+    function explodePie(e) {
+      if (typeof(e.dataSeries.dataPoints[e.dataPointIndex].exploded) === "undefined" || !e.dataSeries.dataPoints[e.dataPointIndex].exploded) {
+        e.dataSeries.dataPoints[e.dataPointIndex].exploded = true;
+      } else {
+        e.dataSeries.dataPoints[e.dataPointIndex].exploded = false;
+      }
+      e.chart.render();
+    }
+  }
+</script>
+<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 {% endblock %}

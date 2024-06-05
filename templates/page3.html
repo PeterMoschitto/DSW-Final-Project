@@ -2,12 +2,102 @@
 
 {% set active_page = "page3" %}
 
-{% block title %}page3{% endblock %}
+{% block title %}Track Your Progress{% endblock %}
 
 {% block content %}
 
-  <h1 class="titles">This is Page 3</h1>
+<div class="container my-5">
+  <h1 class="text-center mb-4">Track Your Progress</h1>
+  <p class="lead text-center mb-5" id="progress_text">
+    Track your progress throughout the day by searching and entering foods. The graphs below will track and compare your daily Proteins, Fats, Carbs, and Sugars from the foods you eat and input them below with the recommended daily averages for each.
+  </p>
 
-  <p>Lorem ipsum</p>
+  <div class="row mb-4">
+    <div class="col-md-6 mb-3">
+      <form action="/page3" class="input-group">
+        <input type="text" class="form-control" placeholder="Search..." name="search">
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-6">
+      <form action="/page3" class="input-group">
+        <select name="description" class="form-control">
+          {{ description_options }}
+        </select>
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="submit">Get Macro Info</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+   <div class="text-center mt-4">
+      <button onclick="showProgressAlert()" class="btn btn-primary" type="button">Check Progress</button>
+  </div>
+  <br>
+
+  <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+
+  <div class="text-center mt-4">
+    <form action="{{ url_for('renderPage3')}}">
+      <button name="clear" class="btn btn-primary" type="submit">Clear Daily Macros</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+<script>
+  window.onload = function () {
+    var chart = new CanvasJS.Chart("chartContainer", {
+      animationEnabled: true,
+      theme: "light2",
+      title: {
+        text: "Macro Information"
+      },
+      axisY: {
+        title: "Grams"
+      },
+      data: [{
+        type: "column",
+        showInLegend: true,
+        legendMarkerColor: "grey",
+        legendText: "Measured in Grams",
+        dataPoints: [
+          { y: 0.36 * {{ doc['weight'] }}, label: "Daily Recommended Protein" },
+          { y: 0 + {{ doc['protein'] }}, label: "Your Protein" },
+          { y: 0.7 * {{ doc['weight'] }}, label: "Daily Recommended Fat" },
+          { y: 0 + {{ doc['fat'] }}, label: "Your Fat" },
+          { y: 1 * {{ doc['weight'] }}, label: "Daily Recommended Carbs" },
+          { y: 0 + {{ doc['carb'] }}, label: "Your Carbs" },
+          { y: 0.2 * {{ doc['weight'] }}, label: "Daily Recommended Sugar" },
+          { y: 0 + {{ doc['sugar'] }}, label: "Your Sugar" }
+        ]
+      }]
+    });
+    chart.render();
+  }
+
+  function showProgressAlert() {
+    var progressText = "{{ gainWeight }}\n\n{{ gainFat }}\n\n{{ gainCarb }}\n\n{{ gainSugar }}";
+    var alertBox = document.createElement("div");
+    alertBox.style.position = "fixed";
+    alertBox.style.top = "50%";
+    alertBox.style.left = "50%";
+    alertBox.style.transform = "translate(-50%, -50%)";
+    alertBox.style.backgroundColor = "Black";
+    alertBox.style.padding = "20px";
+    alertBox.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
+    alertBox.style.zIndex = "9999";
+    alertBox.style.borderRadius = "5px";
+    alertBox.innerHTML = `
+      <h2 style="margin-top: 0; color: #fff;">Your Progress</h2>
+      <pre style="white-space: pre-wrap; word-wrap: break-word; color: #fff; padding: 10px; border-radius: 5px;">${progressText}</pre>
+      <button style="margin-top: 10px;" onclick="this.parentNode.remove()">Close</button>
+    `;
+    document.body.appendChild(alertBox);
+  }
+</script>
 
 {% endblock %}

@@ -11,6 +11,9 @@ import time
 import pymongo
 import sys
 import json
+from flask import Flask, url_for, render_template, request
+from flask import redirect
+from flask import session
  
  
 app = Flask(__name__)
@@ -48,6 +51,9 @@ try:
 except Exception as e:
     print(e)
 
+
+
+
 #context processors run before templates are rendered and add variable(s) to the template's context
 #context processors must return a dictionary 
 #this context processor adds the variable logged_in to the conext for all templates
@@ -75,18 +81,19 @@ def authorized():
     resp = github.authorized_response()
     if resp is None:
         session.clear()
-        message = 'Access denied: reason=' + request.args['error'] + ' error=' + request.args['error_description'] + ' full=' + pprint.pformat(request.args)      
-        #flash('Access denied: reason=' + request.args['error'] + ' error=' + request.args['error_description'] + ' full=' + pprint.pformat(request.args), 'error')      
+        flash('Access denied: reason=' + request.args['error'] + ' error=' + request.args['error_description'] + ' full=' + pprint.pformat(request.args), 'error')      
     else:
         try:
             session['github_token'] = (resp['access_token'], '') #save the token to prove that the user logged in
             session['user_data']=github.get('user').data
-            message = 'You were successfully logged in as ' + session['user_data']['login'] + '.'
+            #pprint.pprint(vars(github['/email']))
+            #pprint.pprint(vars(github['api/2/accounts/profile/']))
+            flash('You were successfully logged in as ' + session['user_data']['login'] + '.')
         except Exception as inst:
             session.clear()
             print(inst)
-            message = 'Unable to login, please try again.', 'error'
-    return render_template('message.html', message=message)
+            flash('Unable to login, please try again.', 'error')
+    return redirect('/')
 
 
 @app.route('/page1', methods=['GET','POST'])
@@ -95,6 +102,11 @@ def renderPage1():
     descriptions = ""
     sugar_Info = ""
     fat_Info = ""
+    carb_Info = ""
+    macros = 0
+    sugar = 0
+    fat = 0
+    carb = 0
     if "search" in request.args:
         category = request.args.get('search').lower().capitalize()
         descriptions = get_description_options(category)
@@ -103,19 +115,195 @@ def renderPage1():
         macros = get_data(description, "Protein")
         sugar = get_data(description, "Sugar Total")
         fat = get_fat_data(description)
+        carb = get_data(description, "Carbohydrate")
         macro_Info = "Protein: " + str(macros) + " grams per serving"
         sugar_Info = "Total Sugar: " + str(sugar) + " grams per serving"
         fat_Info = "Saturated Fat: " + str(fat) + " grams per serving"
-    return render_template('page1.html', description_options=descriptions, macroInfo=macro_Info, sugarInfo=sugar_Info, fatInfo=fat_Info)
+        carb_Info = "Carbs: " + str(carb) + " grams per serving"
+    return render_template('page1.html', description_options=descriptions, macroInfo=macro_Info, sugarInfo=sugar_Info, fatInfo=fat_Info, carbInfo=carb_Info, macros=macros, sugar=sugar, fat=fat, carb=carb)
     
 
-@app.route('/page2')
+@app.route('/page2', methods=['GET','POST'])
 def renderPage2():
-    return render_template('page2.html')
-    
-@app.route('/page3')
+	name = ""
+	height = ""
+	weight = ""
+	age = ""
+	weight_goal = None
+	doc = None
+	if 'user_data' in session:
+		doc = collection.find_one({'id': session['user_data']['login']})
+
+	if request.method == 'POST':
+		session["name"] = request.form.get('name')
+		session["height"] = request.form.get('height')
+		session["weight"] = request.form.get('weight')
+		session["age"] = request.form.get('age')
+		session["weight_goal"] = request.form.get('age')
+		name = request.form.get('name')
+		height = request.form.get('height')
+		weight = request.form.get('weight')
+		age = request.form.get('age')
+		weight_goal = request.form.get('weight_goal')
+		user_info = {
+			"id": session['user_data']['login'],
+			"name": name,
+			"height": height,
+			"weight": weight,				
+			"age": age,
+			"weight_goal": weight_goal
+		}
+		test1 = collection.find_one_and_update(
+			{'id': session['user_data']['login']},
+			{'$set': {
+				'name': name,
+				'weight': weight,
+				'height': height,
+				'age': age,
+				'weight_goal': weight_goal
+			}})
+		# 	test1 = collection.insert_one(user_info) 
+		doc = collection.find_one({'id': session['user_data']['login']})
+		print(doc)
+		if doc == None:
+			collection.insert_one(user_info)
+		else: 
+			collection.find_one_and_update({'id' : session['user_data']['login']}, {'$set': {'name' : name}, '$set': {'weight': weight}, '$set': {'height': height}, '$set': {'age': age}, '$set': {'weight_goal':weight_goal}})
+		doc2 = collection.find_one({'id': session['user_data']['login']})
+		return render_template('page2.html', doc=doc2)
+	return render_template('page2.html', doc=doc)
+
+
+
+
+@app.route('/page3', methods=['GET','POST'])
 def renderPage3():
-    return render_template('page3.html')
+	macros_total = 0
+	sugar = 0
+	fat = 0
+	carb = 0
+	gainWeight = ""
+	gainFat = ""
+	gainCarb = ""
+	gainSugar = ""
+
+	doc = None	
+	if "clear" in request.args:
+		test1 = collection.find_one_and_update(
+			{'id': session['user_data']['login']},
+			{'$set': {
+				"protein": 0,
+				"sugar": 0,
+				"fat": 0,				
+				"carb": 0,
+			}})
+	if 'user_data' in session:
+		doc = collection.find_one({'id': session['user_data']['login']})
+	descriptions = ""
+	if "search" in request.args or "description" in request.args:
+		search_value = request.args.get('search')
+		if search_value:
+			category = search_value.lower().capitalize()
+			descriptions = get_description_options(category)
+		description = request.args.get('description')
+		macros_total += get_data(description, "Protein")
+		sugar += get_data(description, "Sugar Total")
+		fat += get_fat_data(description)
+		carb += get_data(description, "Carbohydrate")
+		user_info = {
+			"id": session['user_data']['login'],
+			"protein": macros_total,
+			"sugar": sugar,
+			"fat": fat,				
+			"carb": carb,
+		}
+		test1 = collection.find_one_and_update(
+			{'id': session['user_data']['login']},
+			{'$inc': {
+				"protein": macros_total,
+				"sugar": sugar,
+				"fat": fat,				
+				"carb": carb,
+			}})
+
+	doc = collection.find_one({'id': session['user_data']['login']})
+	print(doc)
+	if doc == None:
+		collection.insert_one(user_info)
+	else: 
+		collection.find_one_and_update({'id' : session['user_data']['login']}, {'$inc': {'protein' : macros_total}, '$inc': {'sugar': sugar}, '$inc': {'fat': fat}, '$inc': {'carb': carb}})
+	doc2 = collection.find_one({'id': session['user_data']['login']})
+	
+	
+	weight = float(doc['weight'])
+	protein = float(doc['protein'])
+	fats = float(doc['fat'])
+	carbs = float(doc['carb'])
+	sugars = float(doc['sugar'])
+	if 0.36 * weight > protein:
+		if doc['weight_goal'] == "Gain":
+			gainWeight = "You\'re protein consumption is below the daily recommended. You said you wanted to gain weight so you need to eat more!"
+		else: 
+			gainWeight = "You\'re protein consumption is below the daily recommended. You said you wanted to lose weight so you are on the right track!"
+	else:
+		if doc['weight_goal'] == "Gain":
+			gainWeight = "You\'re protein consumption is above the daily recommended. You said you wanted to gain weight so you are on the right track!"
+		else: 
+			gainWeight = "You\'re protein consumption is above the daily recommended. You said you wanted to lose weight so you need to eat more!"
+	if 0.7 * weight > fats:
+		if doc['weight_goal'] == "Gain":
+			gainFat = "You\'re fat consumption is below the daily recommended. You said you wanted to gain weight so you need to eat more!"
+		else: 
+			gainFat = "You\'re fat consumption is below the daily recommended. You said you wanted to lose weight so you are on the right track!"
+	else:
+		if doc['weight_goal'] == "Gain":
+			gainFat = "You\'re fat consumption is above the daily recommended. You said you wanted to gain weight so you are on the right track!"
+		else: 
+			gainFat = "You\'re fat consumption is above the daily recommended. You said you wanted to lose weight so you need to eat more!"
+	if 1 * weight > carbs:
+		if doc['weight_goal'] == "Gain":
+			gainCarb = "You\'re carb consumption is below the daily recommended. You said you wanted to gain weight so you need to eat more!"
+		else: 
+			gainCarb = "You\'re carb consumption is below the daily recommended. You said you wanted to lose weight so you are on the right track!"
+	else:
+		if doc['weight_goal'] == "Gain":
+			gainCarb = "You\'re carb consumption is above the daily recommended. You said you wanted to gain weight so you are on the right track!"
+		else: 
+			gainCarb = "You\'re carb consumption is above the daily recommended. You said you wanted to lose weight so you need to eat more!"
+	if 0.2 * weight > sugars:
+		if doc['weight_goal'] == "Gain":
+			gainSugar = "You\'re sugar consumption is below the daily recommended. You said you wanted to gain weight so you need to eat more!"
+		else: 
+			gainSugar = "You\'re sugar consumption is below the daily recommended. You said you wanted to lose weight so you are on the right track!"
+	else:
+		if doc['weight_goal'] == "Gain":
+			gainSugar = "You\'re sugar consumption is above the daily recommended. You said you wanted to gain weight so you are on the right track!"
+		else: 
+			gainSugar = "You\'re sugar consumption is above the daily recommended. You said you wanted to lose weight so you need to eat more!"
+	
+	print(doc['weight_goal'])
+	print(gainWeight)
+	print(gainSugar)
+	return render_template('page3.html', doc=doc2, description_options=descriptions, macros=macros_total, sugar=sugar, fat=fat, carb=carb, gainWeight=gainWeight, gainFat=gainFat, gainCarb=gainCarb, gainSugar=gainSugar)
+# 	return render_template('page3.html', doc=doc, description_options=descriptions, macros=macros_total, sugar=sugar, fat=fat, carb=carb, gainWeight=gainWeight, gainFat=gainFat, gainCarb=gainCarb, gainSugar=gainSugar)
+    
+    
+    
+@app.route('/page4')
+def renderPage4():
+
+
+	return render_template('page4.html')
+
+def get_data(description, dataType):
+    with open('food.json') as food_data:
+        foods = json.load(food_data)
+    data = 0
+    for c in foods:
+        if c["Description"] == description:
+            data = c["Data"][dataType]
+    return data
+    
     
 def get_description_options(category):
     """Return the html code for the drop down menu.  Each option is a state abbreviation from the demographic data."""
@@ -131,14 +319,7 @@ def get_description_options(category):
         options += Markup("<option value=\"" + s + "\">" + s + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
     return options
 
-def get_data(description, dataType):
-    with open('food.json') as food_data:
-        foods = json.load(food_data)
-    data = 0
-    for c in foods:
-        if c["Description"] == description:
-            data = c["Data"][dataType]
-    return data
+
     
 def get_fat_data(description):
     with open('food.json') as food_data:
@@ -148,6 +329,7 @@ def get_fat_data(description):
         if c["Description"] == description:
             data = c["Data"]["Fat"]["Saturated Fat"]
     return data
+
 
 #the tokengetter is automatically called to check who is logged in.
 @github.tokengetter
