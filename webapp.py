@@ -186,7 +186,8 @@ def renderPage3():
 	gainFat = ""
 	gainCarb = ""
 	gainSugar = ""
-
+	search_value = "Search... "
+	
 	doc = None	
 	if "clear" in request.args:
 		test1 = collection.find_one_and_update(
@@ -281,10 +282,9 @@ def renderPage3():
 		else: 
 			gainSugar = "You\'re sugar consumption is above the daily recommended. You said you wanted to lose weight so you need to eat more!"
 	
-	print(doc['weight_goal'])
-	print(gainWeight)
-	print(gainSugar)
-	return render_template('page3.html', doc=doc2, description_options=descriptions, macros=macros_total, sugar=sugar, fat=fat, carb=carb, gainWeight=gainWeight, gainFat=gainFat, gainCarb=gainCarb, gainSugar=gainSugar)
+	if search_value == None:
+		search_value = "Search... "
+	return render_template('page3.html', doc=doc2, description_options=descriptions, macros=macros_total, sugar=sugar, fat=fat, carb=carb, gainWeight=gainWeight, gainFat=gainFat, gainCarb=gainCarb, gainSugar=gainSugar, search_value=search_value)
 # 	return render_template('page3.html', doc=doc, description_options=descriptions, macros=macros_total, sugar=sugar, fat=fat, carb=carb, gainWeight=gainWeight, gainFat=gainFat, gainCarb=gainCarb, gainSugar=gainSugar)
     
     

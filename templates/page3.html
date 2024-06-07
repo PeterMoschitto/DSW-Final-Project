@@ -7,7 +7,7 @@
 {% block content %}
 
 <div class="container my-5">
-  <h1 class="text-center mb-4">Track Your Progress</h1>
+  <h1 class="text-center mb-4 text-primary">Track Your Progress</h1>
   <p class="lead text-center mb-5" id="progress_text">
     Track your progress throughout the day by searching and entering foods. The graphs below will track and compare your daily Proteins, Fats, Carbs, and Sugars from the foods you eat and input them below with the recommended daily averages for each.
   </p>
@@ -15,7 +15,7 @@
   <div class="row mb-4">
     <div class="col-md-6 mb-3">
       <form action="/page3" class="input-group">
-        <input type="text" class="form-control" placeholder="Search..." name="search">
+        <input type="text" class="form-control" placeholder={{ search_value }} name="search">
         <div class="input-group-append">
           <button class="btn btn-primary" type="submit">Submit</button>
         </div>
