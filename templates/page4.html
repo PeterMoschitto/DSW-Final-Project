@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% set active_page = "page4" %}
+
+{% block title %}Community{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+  <div class="row">
+    <div class="col-md-8 mx-auto text-center">
+      <h1 class="display-4 mb-4 text-primary">Join Our Nutrition Community</h1>
+      <p class="lead mb-5">Connect with others who are on a similar journey to better health and nutrition. Share your experiences, ask questions, and get support from our vibrant community.</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 mx-auto">
+      <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner rounded shadow">
+          <div class="carousel-item active">
+            <div class="card border-0">
+              <div class="d-flex justify-content-center">
+                <img src="/static/before1.jpeg" class="card-img rounded-start" alt="Testimonial 1">
+                <img src="/static/after1.jpeg" class="card-img rounded-end" alt="Testimonial 1">
+              </div>
+              <div class="card-body text-center">
+                <h5 class="card-title">David, 28</h5>
+                <p class="card-text">"This website has been a game-changer for me! I've been able to track my nutrition and stay motivated thanks to the supportive community."</p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="card border-0">
+              <div class="d-flex justify-content-center">
+                <img src="/static/before2.png" class="card-img rounded-start" alt="Testimonial 2">
+                <img src="/static/after2.png" class="card-img rounded-end" alt="Testimonial 2">
+              </div>
+              <div class="card-body text-center">
+                <h5 class="card-title">Popeye, 35</h5>
+                <p class="card-text">"I've learned so much from the community here. The advice and tips have helped me make better food choices and reach my fitness goals."</p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="card border-0">
+              <div class="d-flex justify-content-center">
+                <img src="/static/before3.png" class="card-img rounded-start" alt="Testimonial 3">
+                <img src="/static/after3.jpeg" class="card-img rounded-end" alt="Testimonial 3">
+              </div>
+              <div class="card-body text-center">
+                <h5 class="card-title">Spiderman, 42</h5>
+                <p class="card-text">"The community messaging feature has been invaluable. I've connected with like-minded individuals who understand the challenges of maintaining a healthy lifestyle."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-md-8 mx-auto">
+      <h2 class="text-center mb-4 text-primary">Join the Conversation</h2>
+      <form>
+        <div class="mb-3">
+          <label for="message" class="form-label">Message</label>
+          <textarea class="form-control" id="message" rows="3" placeholder="Share your thoughts or ask a question"></textarea>
+        </div>
+        <div class="text-center">
+          <button onclick="alert('Thank you for joining our community!')" type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

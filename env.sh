@@ -1,0 +1,5 @@
+export SECRET_KEY=asdf
+export GITHUB_CLIENT_ID=Ov23lihLew6CwCnsxwLD
+export GITHUB_CLIENT_SECRET=f6e206bfb719fba11d07d75f61debd9997d92d9a
+export MONGO_CONNECTION_STRING=mongodb+srv://User1:Snoopy01@cluster0.zyyonhp.mongodb.net/?retryWrites=true
+export MONGO_DBNAME=FoodDB
