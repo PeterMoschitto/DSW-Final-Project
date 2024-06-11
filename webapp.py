@@ -189,6 +189,14 @@ def renderPage3():
 	search_value = "Search... "
 	
 	doc = None	
+	
+	user_info = {
+		"id": session['user_data']['login'],
+		"protein": macros_total,
+		"sugar": sugar,
+		"fat": fat,				
+		"carb": carb,
+		}
 	if "clear" in request.args:
 		test1 = collection.find_one_and_update(
 			{'id': session['user_data']['login']},
@@ -237,7 +245,7 @@ def renderPage3():
 			"sugar": sugar,
 			"fat": fat,				
 			"carb": carb,
-			}
+		}
 		collection.insert_one(user_info)
 	else: 
 		collection.find_one_and_update({'id' : session['user_data']['login']}, {'$inc': {'protein' : macros_total}, '$inc': {'sugar': sugar}, '$inc': {'fat': fat}, '$inc': {'carb': carb}})
