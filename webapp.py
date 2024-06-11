@@ -231,6 +231,13 @@ def renderPage3():
 	doc = collection.find_one({'id': session['user_data']['login']})
 	
 	if doc == None:
+		user_info = {
+			"id": session['user_data']['login'],
+			"protein": macros_total,
+			"sugar": sugar,
+			"fat": fat,				
+			"carb": carb,
+			}
 		collection.insert_one(user_info)
 	else: 
 		collection.find_one_and_update({'id' : session['user_data']['login']}, {'$inc': {'protein' : macros_total}, '$inc': {'sugar': sugar}, '$inc': {'fat': fat}, '$inc': {'carb': carb}})
