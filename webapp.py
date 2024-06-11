@@ -196,6 +196,7 @@ def renderPage3():
 		"sugar": sugar,
 		"fat": fat,				
 		"carb": carb,
+		"weight": 0,
 		}
 	if "clear" in request.args:
 		test1 = collection.find_one_and_update(
@@ -225,6 +226,7 @@ def renderPage3():
 			"sugar": sugar,
 			"fat": fat,				
 			"carb": carb,
+			"weight": 0,
 		}
 		print(user_info)
 		test1 = collection.find_one_and_update(
@@ -245,6 +247,7 @@ def renderPage3():
 			"sugar": sugar,
 			"fat": fat,				
 			"carb": carb,
+			"weight": 0,
 		}
 		collection.insert_one(user_info)
 	else: 
