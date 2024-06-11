@@ -197,6 +197,7 @@ def renderPage3():
 		"fat": fat,				
 		"carb": carb,
 		"weight": 0,
+		"weight_goal": "Gain",
 		}
 	if "clear" in request.args:
 		test1 = collection.find_one_and_update(
@@ -227,6 +228,7 @@ def renderPage3():
 			"fat": fat,				
 			"carb": carb,
 			"weight": 0,
+			"weight_goal": "Gain",
 		}
 		print(user_info)
 		test1 = collection.find_one_and_update(
@@ -248,6 +250,7 @@ def renderPage3():
 			"fat": fat,				
 			"carb": carb,
 			"weight": 0,
+			"weight_goal": "Gain",
 		}
 		collection.insert_one(user_info)
 	else: 
