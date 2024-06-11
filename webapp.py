@@ -218,6 +218,7 @@ def renderPage3():
 			"fat": fat,				
 			"carb": carb,
 		}
+		print(user_info)
 		test1 = collection.find_one_and_update(
 			{'id': session['user_data']['login']},
 			{'$inc': {
@@ -226,9 +227,9 @@ def renderPage3():
 				"fat": fat,				
 				"carb": carb,
 			}})
-
+		print(test1)
 	doc = collection.find_one({'id': session['user_data']['login']})
-	print(doc)
+	
 	if doc == None:
 		collection.insert_one(user_info)
 	else: 
